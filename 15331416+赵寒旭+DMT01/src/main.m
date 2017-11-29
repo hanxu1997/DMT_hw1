@@ -7,20 +7,24 @@ img_gray = rgb2gray(img);
 figure(1);
 subplot(1,2,1);
 imshow(img_gray);
+imwrite(img_gray,'..\output\img_gray.jpg');
 title('灰度图');
 % 2. 边缘检测
-BW = edge(img_gray,'sobel');
+edged_result = edge(img_gray,'sobel');
 subplot(1,2,2);
-imshow(BW);
+imshow(edged_result);
 title('边缘检测');
-imwrite(BW,'..\output\edge.jpg');
+imwrite(edged_result,'..\output\edge.jpg');
 
 % 3. 霍夫变换得到A4纸边缘
-[H,Theta,Rho] = hough(BW);
+% 计算二值图像的标准霍夫变换
+[H,Theta,Rho] = hough(edged_result);
+% 从霍夫变换矩阵H中提取7个极值点
 P  = houghpeaks(H,7,'threshold',0.4*max(H(:)));
 x = Theta(P(:,2)); 
 y = Rho(P(:,1));
-lines = houghlines(BW,Theta,Rho,P,'FillGap',200,'MinLength',180);
+% 找原图中的线
+lines = houghlines(edged_result,Theta,Rho,P,'FillGap',200,'MinLength',180);
 figure(2);
 subplot(1,2,1);
 imshow(img);
